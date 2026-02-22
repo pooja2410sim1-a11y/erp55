@@ -12,7 +12,7 @@
 
             <!-- User Management -->
             <li v-if="hasRole('SuperAdmin')">
-                <router-link to="/user-management" active-class="active-link">
+                <router-link to="/admin/users" active-class="active-link">
                     User Management
                 </router-link>
             </li>

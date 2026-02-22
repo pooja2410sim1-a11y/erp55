@@ -1,13 +1,12 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import { fetchUser } from './auth'
+import { initializeAuth } from './auth'
 
 const app = createApp(App)
 
 app.use(router)
 
-app.mount('#app')
+await initializeAuth()
 
-// Fetch user AFTER mount
-fetchUser()
+app.mount('#app')

@@ -3,7 +3,7 @@ import MainLayout from '../layouts/MainLayout.vue'
 import Home from '../pages/Home.vue'
 import Login from '../pages/Login.vue'
 import UserManagement from '../pages/admin/UserManagement.vue'
-import { authState, hasRole } from '../auth'
+import { authState, hasRole, initializeAuth } from '../auth'
 
 const routes = [
     {
@@ -29,6 +29,10 @@ const routes = [
         path: '/login',
         name: 'Login',
         component: Login
+    },
+    {
+        path: '/user-management',
+        redirect: '/admin/users'
     }
 ]
 
@@ -37,7 +41,11 @@ const router = createRouter({
     routes
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+
+    if (authState.loading) {
+        await initializeAuth()
+    }
 
     if (to.meta.requiresAuth && !authState.user) {
         return next('/login')

@@ -30,10 +30,15 @@ class DatabaseSeeder extends Seeder
         | Create Admin User
         |--------------------------------------------------------------------------
         */
-        $admin = User::firstOrCreate([
+        $firstName = 'Admin';
+        $lastName = 'User';
+
+        $admin = User::updateOrCreate([
             'email' => 'admin@kaushal.local'
         ], [
-            'name' => 'Admin',
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'name' => "$firstName $lastName",
             'password' => Hash::make('password123')
         ]);
 

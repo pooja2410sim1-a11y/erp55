@@ -7,6 +7,8 @@ export const authState = reactive({
     loading: true
 })
 
+let authBootstrapPromise = null
+
 export async function fetchUser() {
     try {
         const response = await axios.get('/user')
@@ -20,6 +22,14 @@ export async function fetchUser() {
     } finally {
         authState.loading = false
     }
+}
+
+export function initializeAuth() {
+    if (!authBootstrapPromise) {
+        authBootstrapPromise = fetchUser()
+    }
+
+    return authBootstrapPromise
 }
 
 export function hasRole(role) {
