@@ -15,6 +15,10 @@ const routes = [
         children: [
             { path: '', redirect: '/admin/dashboard' },
             {
+                path: '',
+                redirect: '/admin/dashboard'
+            },
+            {
                 path: 'admin/dashboard',
                 name: 'Home',
                 component: Home,
@@ -54,6 +58,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     if (authState.loading) return next()
+    if (authState.loading) {
+        return next()
+    }
 
     if (to.meta.requiresAuth && !authState.user) {
         return next('/login')

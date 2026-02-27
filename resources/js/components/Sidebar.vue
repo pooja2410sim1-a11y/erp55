@@ -2,19 +2,20 @@
     <aside class="sidebar">
         <div class="brand">TextileERP</div>
 
-        <nav>
-            <p class="section">Main</p>
-            <router-link v-if="hasPermission('dashboard.view')" to="/admin/dashboard" class="item" active-class="active">Dashboard</router-link>
-            <router-link v-if="hasPermission('user.view')" to="/admin/users" class="item" active-class="active">Users</router-link>
-            <router-link v-if="hasPermission('role.view')" to="/admin/roles" class="item" active-class="active">Roles</router-link>
-            <router-link v-if="hasPermission('manage_permissions')" to="/admin/permissions" class="item" active-class="active">Permissions</router-link>
+        <ul>
+            <li v-if="hasRole('SuperAdmin')">
+                <router-link to="/admin/dashboard" active-class="active-link">
+                    Dashboard
+                </router-link>
+            </li>
 
-            <p class="section">Modules</p>
-            <span class="item disabled">Buyer Orders</span>
-            <span class="item disabled">Bill of Materials</span>
-            <span class="item disabled">Purchase Orders</span>
-        </nav>
-    </aside>
+            <li v-if="hasRole('SuperAdmin')">
+                <router-link to="/admin/users" active-class="active-link">
+                    User Management
+                </router-link>
+            </li>
+        </ul>
+    </div>
 </template>
 
 <script>
