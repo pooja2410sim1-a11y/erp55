@@ -3,7 +3,9 @@ import MainLayout from '../layouts/MainLayout.vue'
 import Home from '../pages/Home.vue'
 import Login from '../pages/Login.vue'
 import UserManagement from '../pages/admin/UserManagement.vue'
-import { authState, hasRole } from '../auth'
+import RoleManagement from '../pages/admin/RoleManagement.vue'
+import PermissionManagement from '../pages/admin/PermissionManagement.vue'
+import { authState, hasPermission } from '../auth'
 
 const routes = [
     {
@@ -11,6 +13,7 @@ const routes = [
         component: MainLayout,
         meta: { requiresAuth: true },
         children: [
+            { path: '', redirect: '/admin/dashboard' },
             {
                 path: '',
                 redirect: '/admin/dashboard'
@@ -19,29 +22,42 @@ const routes = [
                 path: 'admin/dashboard',
                 name: 'Home',
                 component: Home,
-                meta: { role: 'SuperAdmin' }
+                meta: { permission: 'dashboard.view' },
             },
             {
                 path: 'admin/users',
                 name: 'UserManagement',
                 component: UserManagement,
-                meta: { role: 'SuperAdmin' }
-            }
-        ]
+                meta: { permission: 'user.view' },
+            },
+            {
+                path: 'admin/roles',
+                name: 'RoleManagement',
+                component: RoleManagement,
+                meta: { permission: 'role.view' },
+            },
+            {
+                path: 'admin/permissions',
+                name: 'PermissionManagement',
+                component: PermissionManagement,
+                meta: { permission: 'manage_permissions' },
+            },
+        ],
     },
     {
         path: '/login',
         name: 'Login',
-        component: Login
-    }
+        component: Login,
+    },
 ]
 
 const router = createRouter({
     history: createWebHistory('/'),
-    routes
+    routes,
 })
 
 router.beforeEach((to, from, next) => {
+    if (authState.loading) return next()
     if (authState.loading) {
         return next()
     }
@@ -50,7 +66,7 @@ router.beforeEach((to, from, next) => {
         return next('/login')
     }
 
-    if (to.meta.role && !hasRole(to.meta.role)) {
+    if (to.meta.permission && !hasPermission(to.meta.permission)) {
         return next('/login')
     }
 

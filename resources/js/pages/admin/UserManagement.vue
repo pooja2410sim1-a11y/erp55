@@ -15,8 +15,6 @@ const stats = ref({
 })
 
 const showUserModal = ref(false)
-const showRoleModal = ref(false)
-
 const editUserId = ref(null)
 const editRoleId = ref(null)
 
@@ -42,19 +40,13 @@ const dashboardTiles = computed(() => [
 ])
 
 const loadUsers = async () => {
-    const res = await axios.get('/api/users')
-    users.value = res.data
+    const response = await axios.get('/api/users')
+    users.value = response.data
 }
 
 const loadRoles = async () => {
-    const res = await axios.get('/api/roles')
-    roles.value = res.data
-}
-
-const loadPermissions = async () => {
-    const res = await axios.get('/api/permissions')
-    permissions.value = res.data.permissions
-    roles.value = res.data.roles
+    const response = await axios.get('/api/roles')
+    roles.value = response.data
 }
 
 const loadStats = async () => {
@@ -169,6 +161,68 @@ const togglePermission = async (roleId, permissionId, checked) => {
 </script>
 
 <template>
+    <section class="page-card">
+        <div class="header-row">
+            <div>
+                <h1>User Management</h1>
+                <p>Manage users with first name and second name fields separately.</p>
+            </div>
+            <button v-if="canAddUsers" class="primary" @click="openUserModal()">+ Add User</button>
+        </div>
+
+        <table v-if="canViewUsers">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Direct Permissions</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="user in users" :key="user.id">
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.roles.length ? user.roles[0].label : '-' }}</td>
+                    <td>{{ user.permissions?.length || 0 }}</td>
+                    <td>
+                        <button v-if="canEditUsers" @click="openUserModal(user)">Edit</button>
+                        <button v-if="canDeleteUsers" class="danger" @click="deleteUser(user.id)">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div v-if="showUserModal" class="modal-overlay">
+        <div class="modal">
+            <h3>{{ editUserId ? 'Edit User' : 'Add New User' }}</h3>
+            <p class="sub">The user will receive access based on assigned role and permissions.</p>
+
+            <label>First Name *</label>
+            <input v-model="userForm.first_name" placeholder="e.g., Ravi" />
+
+            <label>Second Name *</label>
+            <input v-model="userForm.last_name" placeholder="e.g., Kumar" />
+
+            <label>Email (Login) *</label>
+            <input v-model="userForm.email" placeholder="e.g., ravi@textileerp.com" />
+
+            <label>{{ editUserId ? 'Password (optional)' : 'Password *' }}</label>
+            <input v-model="userForm.password" type="password" placeholder="Min 6 characters" />
+
+            <label>Role *</label>
+            <select v-model="userForm.role_id">
+                <option disabled value="">Select role</option>
+                <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.label }}</option>
+            </select>
+
+            <div class="actions">
+                <button @click="showUserModal = false">Cancel</button>
+                <button class="primary" @click="saveUser">{{ editUserId ? 'Update User' : 'Create User' }}</button>
+            </div>
+        </div>
     <div class="admin-page">
         <div class="hero">
             <h1>Admin Dashboard</h1>

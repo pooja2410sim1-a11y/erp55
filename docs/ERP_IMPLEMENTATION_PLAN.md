@@ -64,3 +64,11 @@
 3. Build Role CRUD and User CRUD with action permissions.
 4. Build dashboard tiles and module visibility based on permissions.
 5. Prepare Hostinger deployment checklist and production config.
+
+
+## 6) Implementation Status (Current)
+- ✅ Seeded initial roles and admin user via `DatabaseSeeder` + `PermissionSeeder`.
+- ✅ Login/authentication mapped to existing Laravel `users` table, with RBAC role/permission payload returned from auth endpoint.
+- ✅ Role/User CRUD endpoints protected with action permissions (`user.view/add/edit/delete`, `role.view/add/edit/delete`).
+- ✅ Dashboard and sidebar now show module visibility based on assigned permissions.
+- ✅ Hostinger deployment checklist added in `docs/HOSTINGER_DEPLOYMENT_CHECKLIST.md`.

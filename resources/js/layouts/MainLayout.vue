@@ -1,12 +1,12 @@
 <template>
-    <div class="layout">
+    <div class="layout-shell">
         <Sidebar />
 
         <div class="main">
             <Navbar />
-            <div class="content">
+            <main class="content">
                 <router-view />
-            </div>
+            </main>
         </div>
     </div>
 </template>
@@ -18,28 +18,31 @@ import Navbar from '../components/Navbar.vue'
 export default {
     components: {
         Sidebar,
-        Navbar
-    }
+        Navbar,
+    },
 }
 </script>
 
 <style scoped>
-.layout {
+.layout-shell {
     display: flex;
-    height: 100vh;
-    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    background: #050a16;
+    color: #dbe6ff;
+    font-family: Inter, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .main {
     flex: 1;
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .content {
-    padding: 20px;
-    background: #f4f6f9;
     flex: 1;
     overflow-y: auto;
+    padding: 24px;
+    background: radial-gradient(circle at top, #0f1b37 0%, #050a16 58%);
 }
 </style>
