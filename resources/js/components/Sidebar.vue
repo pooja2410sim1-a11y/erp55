@@ -1,76 +1,75 @@
 <template>
-    <div class="sidebar">
-        <h2 class="logo">ERP</h2>
+    <aside class="sidebar">
+        <div class="brand">TextileERP</div>
 
-        <ul>
-            <!-- Dashboard -->
-            <li v-if="hasRole('SuperAdmin')">
-                <router-link to="/" active-class="active-link">
-                    Dashboard
-                </router-link>
-            </li>
+        <nav>
+            <p class="section">Main</p>
+            <router-link v-if="hasPermission('dashboard.view')" to="/admin/dashboard" class="item" active-class="active">Dashboard</router-link>
+            <router-link v-if="hasPermission('user.view')" to="/admin/users" class="item" active-class="active">Users</router-link>
+            <router-link v-if="hasPermission('role.view')" to="/admin/roles" class="item" active-class="active">Roles</router-link>
+            <router-link v-if="hasPermission('manage_permissions')" to="/admin/permissions" class="item" active-class="active">Permissions</router-link>
 
-            <!-- User Management -->
-            <li v-if="hasRole('SuperAdmin')">
-                <router-link to="/user-management" active-class="active-link">
-                    User Management
-                </router-link>
-            </li>
-
-            <!-- Placeholder -->
-            <li>
-                <router-link to="#">
-                    Future Module
-                </router-link>
-            </li>
-        </ul>
-    </div>
+            <p class="section">Modules</p>
+            <span class="item disabled">Buyer Orders</span>
+            <span class="item disabled">Bill of Materials</span>
+            <span class="item disabled">Purchase Orders</span>
+        </nav>
+    </aside>
 </template>
 
 <script>
-import { hasRole } from '../auth'
+import { hasPermission } from '../auth'
 
 export default {
     setup() {
-        return { hasRole }
-    }
+        return { hasPermission }
+    },
 }
 </script>
 
 <style scoped>
 .sidebar {
-    width: 220px;
-    background: #1e293b;
-    color: white;
-    padding: 20px;
+    width: 280px;
+    background: #070d1b;
+    border-right: 1px solid rgba(95, 130, 201, 0.2);
+    padding: 18px 14px;
 }
 
-.logo {
-    margin-bottom: 30px;
+.brand {
+    color: #eaf2ff;
+    font-size: 30px;
+    font-weight: 800;
+    margin: 6px 8px 16px;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
+.section {
+    color: #6d82ad;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 14px 10px 8px;
 }
 
-li {
-    margin-bottom: 15px;
-}
-
-a {
-    color: white;
-    text-decoration: none;
+.item {
     display: block;
-    padding: 6px 10px;
-    border-radius: 6px;
+    color: #bbcef6;
+    padding: 11px 12px;
+    text-decoration: none;
+    border-radius: 10px;
+    margin-bottom: 4px;
 }
 
-a:hover {
-    background: #334155;
+.item:hover {
+    background: #101c36;
 }
 
-.active-link {
-    background: #0ea5e9;
+.active {
+    background: #142a52;
+    color: #4da3ff;
+    font-weight: 600;
+}
+
+.disabled {
+    opacity: 0.5;
 }
 </style>

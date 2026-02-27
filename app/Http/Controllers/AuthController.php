@@ -7,12 +7,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login
-    |--------------------------------------------------------------------------
-    */
-
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -22,28 +16,14 @@ class AuthController extends Controller
 
         if (!Auth::attempt($credentials)) {
             return response()->json([
-                'message' => 'Invalid credentials'
+                'message' => 'Invalid credentials',
             ], 401);
         }
 
         $request->session()->regenerate();
 
-        $user = Auth::user()->load('roles');
-
-        return response()->json([
-            'id' => $user->id,
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-            'email' => $user->email,
-            'roles' => $user->roles->pluck('name')
-        ]);
+        return $this->buildAuthResponse(Auth::user()->id);
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Logout
-    |--------------------------------------------------------------------------
-    */
 
     public function logout(Request $request)
     {
@@ -52,26 +32,32 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return response()->json([
-            'message' => 'Logged out'
+            'message' => 'Logged out',
         ]);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Get Authenticated User
-    |--------------------------------------------------------------------------
-    */
-
     public function user(Request $request)
     {
-        $user = $request->user()->load('roles');
+        return $this->buildAuthResponse($request->user()->id);
+    }
+
+    private function buildAuthResponse(int $userId)
+    {
+        $user = Auth::getProvider()->retrieveById($userId)->load(['roles.permissions', 'permissions']);
+
+        $permissions = $user->permissions
+            ->pluck('name')
+            ->merge($user->roles->flatMap(fn ($role) => $role->permissions->pluck('name')))
+            ->unique()
+            ->values();
 
         return response()->json([
             'id' => $user->id,
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'email' => $user->email,
-            'roles' => $user->roles->pluck('name')
+            'roles' => $user->roles->pluck('name')->values(),
+            'permissions' => $permissions,
         ]);
     }
 }

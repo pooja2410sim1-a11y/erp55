@@ -9,22 +9,21 @@ class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, $role)
     {
-        // If user is not logged in, let auth:sanctum handle it
         if (!auth()->check()) {
-            return $next($request);
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json(['message' => 'Unauthenticated.'], 401);
+            }
+
+            return redirect('/login');
         }
 
-        // If user does not have required role
         if (!auth()->user()->hasRole($role)) {
-
-            // If API request → return JSON
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
-                    'message' => 'Forbidden.'
+                    'message' => 'Forbidden.',
                 ], 403);
             }
 
-            // If web request → redirect to dashboard
             return redirect('/');
         }
 

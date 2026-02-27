@@ -3,11 +3,14 @@ import App from './App.vue'
 import router from './router'
 import { fetchUser } from './auth'
 
-const app = createApp(App)
+async function bootstrap() {
+    // Resolve auth state BEFORE first route navigation,
+    // so unauthenticated users are correctly redirected to /login.
+    await fetchUser()
 
-app.use(router)
+    const app = createApp(App)
+    app.use(router)
+    app.mount('#app')
+}
 
-app.mount('#app')
-
-// Fetch user AFTER mount
-fetchUser()
+bootstrap()

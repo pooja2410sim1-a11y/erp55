@@ -11,17 +11,13 @@ class Role extends Model
         'label',
     ];
 
-   public function users()
-{
-    return $this->belongsToMany(User::class, 'role_user');
-}
-
-public function permissions()
-{
-    return $this->belongsToMany(Permission::class, 'permission_role');
-}
-    public function roles()
+    public function users()
     {
-    return $this->belongsToMany(\App\Models\Role::class, 'role_user');
+        return $this->belongsToMany(User::class, 'role_user');
+    }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'permission_role');
     }
 }
