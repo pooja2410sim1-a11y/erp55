@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -13,6 +12,8 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
     ];
@@ -33,10 +34,15 @@ class User extends Authenticatable
     |--------------------------------------------------------------------------
     */
 
-    public function roles()
-{
-    return $this->belongsToMany(Role::class, 'role_user');
-}
+        public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'role_user');
+    }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'permission_user');
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -53,6 +59,14 @@ class User extends Authenticatable
 
     public function hasPermission(string $permissionName): bool
     {
+        $hasDirectPermission = $this->permissions()
+            ->where('name', $permissionName)
+            ->exists();
+
+        if ($hasDirectPermission) {
+            return true;
+        }
+
         return $this->roles()
             ->whereHas('permissions', function ($query) use ($permissionName) {
                 $query->where('name', $permissionName);
