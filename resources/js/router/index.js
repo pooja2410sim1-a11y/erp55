@@ -13,6 +13,10 @@ const routes = [
         children: [
             {
                 path: '',
+                redirect: '/admin/dashboard'
+            },
+            {
+                path: 'admin/dashboard',
                 name: 'Home',
                 component: Home,
                 meta: { role: 'SuperAdmin' }
@@ -38,6 +42,9 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+    if (authState.loading) {
+        return next()
+    }
 
     if (to.meta.requiresAuth && !authState.user) {
         return next('/login')
@@ -48,7 +55,7 @@ router.beforeEach((to, from, next) => {
     }
 
     if (to.path === '/login' && authState.user) {
-        return next('/')
+        return next('/admin/dashboard')
     }
 
     next()

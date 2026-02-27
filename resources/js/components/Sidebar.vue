@@ -3,24 +3,15 @@
         <h2 class="logo">ERP</h2>
 
         <ul>
-            <!-- Dashboard -->
             <li v-if="hasRole('SuperAdmin')">
-                <router-link to="/" active-class="active-link">
+                <router-link to="/admin/dashboard" active-class="active-link">
                     Dashboard
                 </router-link>
             </li>
 
-            <!-- User Management -->
             <li v-if="hasRole('SuperAdmin')">
-                <router-link to="/user-management" active-class="active-link">
+                <router-link to="/admin/users" active-class="active-link">
                     User Management
-                </router-link>
-            </li>
-
-            <!-- Placeholder -->
-            <li>
-                <router-link to="#">
-                    Future Module
                 </router-link>
             </li>
         </ul>
